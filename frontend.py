@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-BACKEND_URL = "http://127.0.0.1:8000"
+BACKEND_URL = "https://code-review-assistent.onrender.com"
 
 st.title("🤖 Code Review Assistant")
 
@@ -66,3 +66,4 @@ if st.button("📜 View All Reports"):
             st.info("No reports found yet.")
     except Exception as e:
         st.error(f"Error fetching reports: {e}")
+
