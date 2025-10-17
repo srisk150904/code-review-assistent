@@ -9,7 +9,7 @@ This project is designed to showcase **API design, code analysis, LLM integratio
 ## 🌐 Live Demo
 
 👉 **Frontend (Streamlit UI):**
-🔗 [https://your-streamlit-app.streamlit.app]([https://your-streamlit-app.streamlit.app](https://code-review-assistent-qvuhqoctvu65sxxxszt2uy.streamlit.app/))
+🔗 [https://your-streamlit-app.streamlit.app](https://your-streamlit-app.streamlit.app](https://code-review-assistent-qvuhqoctvu65sxxxszt2uy.streamlit.app/))
 
 👉 **Backend (FastAPI API Docs):**
 🔗 [https://code-review-assistent.onrender.com/docs](https://code-review-assistent.onrender.com/docs)
@@ -135,3 +135,4 @@ UI → [http://localhost:8501](http://localhost:8501)
 * Clearly see how uploaded code → review report pipeline works
 
 ---
+
