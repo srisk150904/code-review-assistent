@@ -13,7 +13,7 @@ This project is part of a **placement evaluation** and demonstrates:
 
 ## 🌐 Live Demo (No Setup Needed)
 
-* **Final streamlit Web App (End-to-End System with Streamlit UI):**
+* **Final Web App (End-to-End System with Streamlit UI):**
   👉 [https://code-review-assistent-qvuhqoctvu65sxxxszt2uy.streamlit.app](https://code-review-assistent-qvuhqoctvu65sxxxszt2uy.streamlit.app)
 
 * **Backend (FastAPI API + Docs):**
@@ -148,4 +148,3 @@ code-review-assistant/
 * Optionally, **run locally** for development.
 
 ---
-
