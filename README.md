@@ -1,9 +1,3 @@
-Got it ✅ Since this project is part of your **placement evaluation**, I’ll make the `README.md` very clear, step-by-step, so anyone (even without prior setup) can run and test it quickly.
-
-Here’s a polished `README.md` you can drop into your repo:
-
----
-
 # 🚀 Code Review Assistant
 
 An automated **code review system** that analyzes uploaded code files or pasted snippets for **readability, modularity, and potential bugs**, combining **static analysis** + **LLM suggestions**.
@@ -256,7 +250,3 @@ curl -X GET "http://127.0.0.1:8000/reports/1"
 * Run the server
 * Test via Swagger or `curl`
 * Clearly understand how code → review report works
-
----
-
-Would you like me to also write a **1–2 minute demo script** (like what to show on screen, what to say) so you can record your demo video smoothly?
