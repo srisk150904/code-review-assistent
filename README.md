@@ -2,7 +2,19 @@
 
 An automated **code review system** that analyzes uploaded code files or pasted snippets for **readability, modularity, and potential bugs**, combining **static analysis** + **LLM suggestions**.
 
-This project is designed to showcase **API design, code analysis, and LLM integration**.
+This project is designed to showcase **API design, code analysis, LLM integration, and a working frontend**.
+
+---
+
+## 🌐 Live Demo
+
+👉 **Frontend (Streamlit UI):**
+🔗 [https://your-streamlit-app.streamlit.app]([https://your-streamlit-app.streamlit.app](https://code-review-assistent-qvuhqoctvu65sxxxszt2uy.streamlit.app/))
+
+👉 **Backend (FastAPI API Docs):**
+🔗 [https://code-review-assistent.onrender.com/docs](https://code-review-assistent.onrender.com/docs)
+
+*(For evaluators: You can directly use the Streamlit app above. The backend API is deployed separately on Render and powers the UI.)*
 
 ---
 
@@ -24,6 +36,7 @@ code-review-assistant/
 │   └── sample.py           # Example test file
 ├── tests/
 │   └── test_api_smoke.py   # Simple test scaffold
+├── frontend.py             # Streamlit UI
 ├── requirements.txt        # Python dependencies
 ├── .env.example            # Environment template
 └── README.md               # Documentation
@@ -31,222 +44,94 @@ code-review-assistant/
 
 ---
 
-## ⚡ Requirements
+## ⚡ Requirements (for local run)
 
 * **Python 3.10+**
-* **pip** (Python package manager)
-* (Optional) **OpenAI API key** for real LLM reviews.
+* **pip**
+* (Optional) **OpenAI API key** for real LLM reviews
   *(By default, a mock reviewer is used so it works offline too.)*
 
 ---
 
-## 🔧 Setup
+## ▶️ Running Locally
 
-1. **Clone repo & enter project folder**
+### 1. Backend (FastAPI)
 
-   ```bash
-   git clone <repo-url>
-   cd code-review-assistant
-   ```
-
-2. **Create virtual environment**
-
-   ```bash
-   python -m venv .venv
-   ```
-
-3. **Activate venv**
-
-   * Windows (PowerShell):
-
-     ```bash
-     .venv\Scripts\activate
-     ```
-   * Linux/Mac:
-
-     ```bash
-     source .venv/bin/activate
-     ```
-
-4. **Install dependencies**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Setup environment file**
-
-   ```bash
-   copy .env.example .env   # Windows
-   # OR
-   cp .env.example .env     # Linux/Mac
-   ```
-
-   Edit `.env` if you want to add:
-
-   ```
-   OPENAI_API_KEY=sk-xxxx
-   DB_URL=sqlite:///./reviews.db
-   ```
-
----
-
-## ▶️ Run the Application
-
-Start the FastAPI server:
+Start backend API:
 
 ```bash
 uvicorn backend.app:app --reload
 ```
 
-Expected output:
-
-```
-INFO:     Uvicorn running on http://127.0.0.1:8000
-```
+Swagger UI → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 ---
 
-## 🌐 Using the API
+### 2. Frontend (Streamlit)
 
-### 📘 1. Open Docs
-
-Visit: **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**
-This opens **Swagger UI**, where you can try endpoints interactively.
-
----
-
-### 📝 2. Endpoints
-
-#### **POST /review** → Review uploaded code
-
-Options:
-
-* Upload file(s) (e.g. `examples/sample.py`)
-* OR paste code snippets in `text_parts`
-* OR do both
-
-Example (file upload):
+Run frontend:
 
 ```bash
-curl -X POST "http://127.0.0.1:8000/review" \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "language=python" \
-  -F "files=@examples/sample.py;type=text/x-python"
+streamlit run frontend.py
 ```
 
-Example (text snippet):
-
-```bash
-curl -X POST "http://127.0.0.1:8000/review" \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "language=python" \
-  -F "text_parts=def add(a, b):\n    return a+b"
-```
-
-Response:
-
-```json
-{
-  "id": 1,
-  "score": 78,
-  "summary": "Overall OK structure; consider splitting large functions and adding docstrings.",
-  "suggestions": [
-    {
-      "area": "readability",
-      "issue": "Long function without docstring",
-      "suggestion": "Add a docstring and split into helpers.",
-      "snippet": "def processData(...): ..."
-    }
-  ],
-  "static_findings": {
-    "per_file": [
-      {
-        "filename": "sample.py",
-        "findings": { "line_count": 31, "functions": [...] }
-      }
-    ]
-  },
-  "filenames": ["sample.py"]
-}
-```
+UI → [http://localhost:8501](http://localhost:8501)
 
 ---
 
-#### **GET /reports** → List all past reviews
+## 🎯 How It Works
 
-```bash
-curl -X GET "http://127.0.0.1:8000/reports"
-```
-
----
-
-#### **GET /reports/{id}** → Fetch one review by ID
-
-```bash
-curl -X GET "http://127.0.0.1:8000/reports/1"
-```
-
----
-
-## 🔍 How it Works
-
-1. **Input**: Source code (via file or text)
+1. **Input**: Upload Python file or paste code snippet.
 2. **Static Analysis**:
 
-   * Python AST parsing (functions, docstrings, complexity, style issues)
-   * Counts lines, detects long functions, missing docstrings, bad practices
-3. **LLM Integration**:
+   * Parses code using AST
+   * Finds missing docstrings, large functions, cyclomatic complexity, style issues
+3. **LLM Suggestions**:
 
-   * (If API key present) → sends code + static findings to LLM for deeper review
-   * (If no key) → uses a mock reviewer that returns example suggestions
+   * If `OPENAI_API_KEY` is provided → sends code + findings to LLM
+   * Else → returns mock suggestions for demo
 4. **Storage**:
 
-   * Review results saved into SQLite (`reviews.db`)
-5. **Output**: JSON report with `score`, `summary`, `suggestions`, and static findings
+   * Results stored in SQLite (`reviews.db`)
+5. **Output**: JSON + Streamlit dashboard with:
+
+   * Score
+   * Summary
+   * Suggestions
+   * Static findings
 
 ---
 
-## 🎯 Demo Flow
+## ✅ Example Workflow
 
-1. Run server with `uvicorn backend.app:app --reload`
-2. Go to [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-3. Try **POST /review** → upload `examples/sample.py`
-4. View JSON response → shows score + suggestions
-5. Try **GET /reports** → see history of reviews
+1. Open the **Streamlit app**:
+   👉 [https://your-streamlit-app.streamlit.app](https://your-streamlit-app.streamlit.app)
 
----
+2. Upload `examples/sample.py`.
 
-## ✅ Example Output
+3. Get:
 
-```json
-{
-  "id": 1,
-  "score": 78,
-  "summary": "Overall OK structure; consider splitting large functions and adding docstrings.",
-  "suggestions": [
-    { "area": "readability", "issue": "No docstring in function", "suggestion": "Add docstring" }
-  ],
-  "filenames": ["sample.py"]
-}
-```
+   * Score (0–100) with progress bar
+   * Readability/bug/modularity suggestions
+   * Static analysis findings
+
+4. View past reports in the UI.
 
 ---
 
 ## 📌 Notes
 
 * Works offline with mock suggestions.
-* Add your `OPENAI_API_KEY` in `.env` for real LLM insights.
-* Database is auto-created as `reviews.db` in project folder.
+* Add your `OPENAI_API_KEY` in `.env` for real LLM integration.
+* Backend is deployed on Render (ephemeral SQLite DB).
+* Frontend is deployed on Streamlit Cloud for easy access.
 
 ---
 
-✨ With this README, an evaluator can:
+✨ With this setup, an evaluator can:
 
-* Set up the venv
-* Install deps
-* Run the server
-* Test via Swagger or `curl`
-* Clearly understand how code → review report works
+* Use the **live Streamlit demo** directly
+* Or run backend + frontend locally
+* Clearly see how uploaded code → review report pipeline works
+
+---
